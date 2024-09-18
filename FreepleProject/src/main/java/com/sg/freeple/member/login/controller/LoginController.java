@@ -8,11 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.View;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Objects;
@@ -26,7 +25,7 @@ public class LoginController {
 	@Autowired
 	private LoginService loginService;
 	
-	//@로그인 페이지
+	//@로그인 페이지 이동
 	@RequestMapping("loginPage") // 로그인 페이지 이동
 	public String loginPage() { 
 		
@@ -53,6 +52,9 @@ public class LoginController {
 		// Server User Info 
 		FP_MemberVo serverUserInfo = loginService.loginProcess(memberVo);
 
+		// Login Fail Count : 로그인 실패 횟수
+		int failCount = serverUserInfo.getMb_login_failures();
+
 		// 2. Server User Info : 서버 유저 정보 확인..
 		if(Objects.isNull(serverUserInfo)){
 
@@ -74,15 +76,13 @@ public class LoginController {
 				// 서버에 유저 정보가 있으나 패스워드가 다를시 204 에러 발생..
 				httpStatVal = HttpStatus.NO_CONTENT.value();
 				log.error("No Content = {}" , httpStatVal + " 번 발생");
+				map.put("failCount" , failCount);
 				map.put("httpStatVal",httpStatVal);
 				return map;
 
 			}
 
 			// ( # 유저 -> 관리자한테 문의 -> 관리자가 응답 -> 유저에게 다시 failCount 롤백.. ) - 이건 나중에 천천히 해도될듯
-
-			// Login Fail Count : 로그인 실패 횟수
-			int failCount = serverUserInfo.getMb_login_failures();
 
 			/* 로그인 실패 5번 이상이면*/
 			if(failCount > 5){

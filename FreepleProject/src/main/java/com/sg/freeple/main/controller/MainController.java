@@ -1,10 +1,13 @@
 package com.sg.freeple.main.controller;
 
+import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.sg.freeple.member.login.service.LoginService;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,10 +33,25 @@ public class MainController {
 	private FreepService freepService;
 	@Autowired
 	private MemberCouponService memberCouponService;
-	
+	@Autowired
+	private LoginService loginService;
+
+	// 20240918
+	// 로그인이 정상적인 응답값으로 넘어오면 메인 페이지를 보여주고
+	// Server User Info 를 넘길수 있게 변경
 	@RequestMapping("mainPage")//메인페이지로 이동
-	public String mainPage() {
-		
+	public String mainPage(String mb_id , HttpServletRequest request) {
+
+		// 로그인 성공 -> 메인 페이지로 이동 ( UserInfo 가지고 mainPage 로..)
+		if(mb_id != null){
+			FP_MemberVo memberVo = new FP_MemberVo();
+			memberVo.setMb_id(mb_id);
+
+			// Server User Info
+			FP_MemberVo serverUserInfo = loginService.loginProcess(memberVo);
+			HttpSession session = request.getSession();
+			session.setAttribute("serverUserInfo" , serverUserInfo);
+		}
 		
 		return "main/mainPage";
 	}
