@@ -17,7 +17,7 @@ public interface LoginSQLMapper {
 	public void loginDateUpdate(FP_MemberVo memberVo);
 
 	//입력한 이메일로 멤버 넘버를 찾는 쿼리. 
-	public int selectEmailMemberFK(String mb_email);
+	public Integer selectEmailMemberFK(String mb_email);
 	
 	//메일 인증번호 버튼 누를시 등록되는 쿼리.  
 	public void insertMailAuth(FP_MailAuthVo fp_MailAuthVo);

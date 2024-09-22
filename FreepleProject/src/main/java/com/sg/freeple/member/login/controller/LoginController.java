@@ -14,6 +14,7 @@ import org.springframework.web.servlet.View;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Controller
@@ -122,21 +123,22 @@ public class LoginController {
 		return "redirect:../../main/mainPage";
 	}
 	
-	//@아이디 찾기 페이지 1 
-	@RequestMapping("firstFindIdPage")
-	public String firstFindIdPage() {
+	//@아이디 찾기 페이지
+	@RequestMapping("loginFindIdPage")
+	public String loginFindIdPage() {
 		
-		return "member/login/firstFindIdPage";
+		return "member/login/loginFindIdPage";
 	}
 	
 	//@아이디 찾기 페이지 2 (기능 : 이메일-> 인증번호 보내기)
-	@RequestMapping("secondFindIdPage")
-	public String secondFindIdPage(String mb_email) {
-		
+	@ResponseBody
+	@RequestMapping(value= "loginFindIdProcess" , method = RequestMethod.POST)
+	public boolean loginFindIdProcess(@RequestBody Map<String,String> emailMap) {
+		String mb_email = emailMap.get("mb_email");
+
 		//입력한 메일로 인증번호 발송
-		loginService.findIdSendEmailKeyProcess(mb_email);
-		
-		return "member/login/secondFindIdPage";
+		boolean isFindEmail = loginService.loginFindIdProcess(mb_email);
+		return isFindEmail;
 	}
 	
 	//@아이디 찾기 페이지 3 (기능 : 인증 번호확인-> 아이디 찾아주기)

@@ -14,7 +14,6 @@
 </head>
 <body>
 	<jsp:include page="../../global/mainTop.jsp"></jsp:include>
-   
 	<div style="width:1200px; margin: 0 auto">
 		<div class="container-fluid">	
 		
@@ -44,11 +43,11 @@
 					</div>
 					 
 					<div class="row mt-3">
-						<div class="col-3"><a href="../login/firstFindIdPage">아이디 찾기</a></div>
+						<div class="col-3"><a href="../login/loginFindIdPage">아이디 찾기</a></div>
 						<div class="col">|</div>
 						<div class="col-3"><a href="../login/firstFindPwPage">비밀번호 찾기</a></div>
 						<div class="col">|</div>
-						<div class="col-4"><a href="../signup/acceptPage">회원가입</a></div>						
+						<div class="col-3"><a href="../signup/acceptPage">회원가입</a></div>
 					</div>
 					
 					<div class="row mt-3"><!-- 로그인 버튼 -->

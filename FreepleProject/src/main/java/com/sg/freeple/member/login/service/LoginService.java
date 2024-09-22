@@ -1,5 +1,6 @@
 package com.sg.freeple.member.login.service;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.mail.internet.MimeMessage;
@@ -39,40 +40,54 @@ public class LoginService {
 	public void loginDateUpdate(FP_MemberVo memberVo) {
 		loginSQLMapper.loginDateUpdate(memberVo);
 	}
-	
-	//아이디 찾기를 할때 이메일에 인증번호를 발송 하는 로직.
-	public void findIdSendEmailKeyProcess(String mb_email) {
-			
-		//이메일을 입력한 유저의 멤버 넘버를 찾는 쿼리.
-		int memberFK = loginSQLMapper.selectEmailMemberFK(mb_email);
-		
-		try {
-			MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true,"UTF-8");
-			
-			mimeMessageHelper.setSubject("[Freeple] - 아이디 찾기 인증번호 발송");
-			
-			String uuid = UUID.randomUUID().toString();
-			String text = "";
-			text += "<h1>[Freeple] 메일 인증 번호</h1><br>";
-			text += "인증 번호 : " + uuid + "<br>"; 
-			text += "인증번호를 입력해주세요.<br> Freeple을 이용해주셔서 감사합니다.";
 
-			mimeMessageHelper.setText(text , true);
-			
-			mimeMessageHelper.setFrom("Admin", "Freeple 관리자 (박한희)");
-			mimeMessageHelper.setTo(mb_email);
-					
-			new MailSenderThread(javaMailSender, mimeMessage).start();
-			
-			FP_MailAuthVo fp_MailAuthVo = new FP_MailAuthVo();
-			fp_MailAuthVo.setMb_no(memberFK);
-			fp_MailAuthVo.setAuth_key(uuid);
-			loginSQLMapper.insertMailAuth(fp_MailAuthVo);
-			
+	// 20240922
+	// 아이디 찾기를 할때 이메일에 인증번호를 발송 하는 로직..
+	public boolean loginFindIdProcess(String mb_email) {
+
+		//이메일을 입력한 유저의 멤버 넘버를 찾는 쿼리.
+		Integer memberFK = loginSQLMapper.selectEmailMemberFK(mb_email);
+
+		// Server User Info 에 Email 정보가 있는지 ( True or False )
+		boolean isFindEmail = false;
+
+		try {
+
+			// Server User Info -> Email Exist ( ? )
+			if(Objects.nonNull(memberFK)){
+
+				isFindEmail = true;
+
+				MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+				MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true,"UTF-8");
+
+				mimeMessageHelper.setSubject("[Freeple] - 아이디 찾기 인증번호 발송");
+
+				String uuid = UUID.randomUUID().toString();
+				String text = "";
+				text += "<h1>[Freeple] 메일 인증 번호</h1><br>";
+				text += "인증 번호 : " + uuid + "<br>";
+				text += "인증번호를 입력해주세요.<br> Freeple을 이용해주셔서 감사합니다.";
+
+				mimeMessageHelper.setText(text , true);
+
+				mimeMessageHelper.setFrom("Admin", "Freeple 관리자 (박한희)");
+				mimeMessageHelper.setTo(mb_email);
+
+				new MailSenderThread(javaMailSender, mimeMessage).start();
+
+				FP_MailAuthVo fp_MailAuthVo = new FP_MailAuthVo();
+				fp_MailAuthVo.setMb_no(memberFK.intValue());
+				fp_MailAuthVo.setAuth_key(uuid);
+				loginSQLMapper.insertMailAuth(fp_MailAuthVo);
+
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		return isFindEmail;
 	}
 	
 	//비밀번호 찾기를 할때 이메일에 인증링크를 발송 하는 로직.
@@ -84,9 +99,9 @@ public class LoginService {
 		try {
 			MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true,"UTF-8");
-			
+
 			mimeMessageHelper.setSubject("[Freeple] - 비밀번호 재설정 인증링크 발송");
-			
+
 			String uuid = UUID.randomUUID().toString();
 			String text = "";
 			text += "<h1>[Freeple] 메일 인증 링크</h1><br>";
@@ -96,17 +111,17 @@ public class LoginService {
 			text += "</a>";
 
 			mimeMessageHelper.setText(text , true);
-			
+
 			mimeMessageHelper.setFrom("Admin", "Freeple 관리자 (박한희)");
 			mimeMessageHelper.setTo(mb_email);
-					
+
 			new MailSenderThread(javaMailSender, mimeMessage).start();
-			
+
 			FP_MailAuthVo fp_MailAuthVo = new FP_MailAuthVo();
 			fp_MailAuthVo.setMb_no(memberFK);
 			fp_MailAuthVo.setAuth_key(uuid);
 			loginSQLMapper.insertMailAuth(fp_MailAuthVo);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
