@@ -58,7 +58,7 @@
 			#{mb_no},
 			#{auth_key},
 			'N',
-			null
+			SYSDATE
 		)
 	</insert>
 	

@@ -103,7 +103,7 @@
 
                 if(data){
                     checkEmailAlertBox.css("border", "2px solid #787878");
-                    checkEmailAlertBox.text("소셜에 등록된 이메일 입니다.\\n 메일을 확인해주세요.");
+                    checkEmailAlertBox.text("소셜에 등록된 이메일 입니다.\n 메일을 확인해주세요.");
                     checkEmailAlertBox.removeClass("text-danger");
                     checkEmailAlertBox.addClass("text-success");
                 } else {

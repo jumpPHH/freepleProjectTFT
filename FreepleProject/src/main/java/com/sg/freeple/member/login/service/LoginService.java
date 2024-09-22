@@ -106,7 +106,7 @@ public class LoginService {
 			String text = "";
 			text += "<h1>[Freeple] 메일 인증 링크</h1><br>";
 			text += "아래 인증하기 링크를 클릭하셔서 비밀번호 재설정 해주세요.<br>";
-			text += "<a href='http://localhost:8181/freeple/member/login/mailAuthProcess?auth_key="+uuid+"'>";
+			text += "<a href='http://localhost:8080/member/login/mailAuthProcess?auth_key="+uuid+"'>";
 			text += "비밀번호 재설정";
 			text += "</a>";
 
